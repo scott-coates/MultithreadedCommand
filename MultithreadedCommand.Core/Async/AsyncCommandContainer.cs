@@ -62,6 +62,7 @@ namespace MultithreadedCommand.Core.Async
 
         public IAsyncCommand Get(string id, Type commandType)
         {
+            //reset timer here.
             return GetContainerItem(id, commandType).AsyncCommand;
         }
 
