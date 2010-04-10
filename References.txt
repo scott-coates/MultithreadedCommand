@@ -12,4 +12,7 @@ add test to see if finished when not removing
 use command remover in controller
 look into using a new class for timers
 look into orig files
-ignore test results, suo, csproj. 
+ignore test results, suo, csproj.
+http://msdn.microsoft.com/en-us/library/ms686364(VS.85).aspx
+Too many interfaces?
+dispose timer

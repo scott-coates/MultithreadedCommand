@@ -5,7 +5,7 @@ using System.Text;
 
 namespace MultithreadedCommand.Core.Async
 {
-    public class AsyncCommandRemover :IAsyncCommandRemover
+    public class AsyncCommandRemover : IAsyncCommandRemover
     {
         IAsyncCommandContainer _container = null;
 
@@ -16,7 +16,7 @@ namespace MultithreadedCommand.Core.Async
 
         public void RemoveCommand(string id, Type commandType)
         {
-            IAsyncCommand command = _container.Get(id, commandType);
+            IAsyncCommand command = _container.Get(id, commandType).AsyncCommand;
             command.Cancel();
             _container.Remove(id, commandType);
         }

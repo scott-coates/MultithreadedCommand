@@ -6,16 +6,15 @@ using System.Timers;
 
 namespace MultithreadedCommand.Core.Async
 {
-    public class AsyncContainerItem : IDisposable
+    public class AsyncContainerItem : IAsyncContainerItem
     {
         public IAsyncCommand AsyncCommand { get; private set; }
-        public Timer Timer { get; private set; }
         public event Action OnItemRemoved;
+        public event Action OnItemAdded;
 
-        public AsyncContainerItem(IAsyncCommand _command, Timer timer)
+        public AsyncContainerItem(IAsyncCommand _command)
         {
             AsyncCommand = _command;
-            Timer = timer;
         }
 
         public void DoOnRemoved()
@@ -26,10 +25,17 @@ namespace MultithreadedCommand.Core.Async
             }
         }
 
+        public void DoOnAdded()
+        {
+            if (OnItemAdded != null)
+            {
+                OnItemAdded();
+            }
+        }
+
         public void Dispose()
         {
             AsyncCommand.Dispose();
-            Timer.Dispose();
         }
     }
 }

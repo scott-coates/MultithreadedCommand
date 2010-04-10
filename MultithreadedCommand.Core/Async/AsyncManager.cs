@@ -9,9 +9,9 @@ namespace MultithreadedCommand.Core.Async
 {
     public class AsyncManager : IAsyncCommand
     {
-        private readonly ICommand _asyncFunc = null;
-        private readonly string _id = string.Empty;
-        private readonly IAsyncCommandContainer _container = null;
+        protected readonly ICommand _asyncFunc = null;
+        protected readonly string _id = string.Empty;
+        protected readonly IAsyncCommandContainer _container = null;
         
         public event Action OnStart
         {
@@ -69,17 +69,23 @@ namespace MultithreadedCommand.Core.Async
             _id = id;
             _asyncFunc = funcToRun;
             _container.Add(this, id, funcToRun.GetType());
-            SetInactive();//set as inactive right away.
         }
 
-        public void Start()
+        public virtual void Start()
         {
-            if (_asyncFunc.Progress.Status != StatusEnum.Running)
+            if (!IsRunning)
             {
-                SetActive();
                 Action del = _asyncFunc.Start;
                 AsyncCallback callback = new AsyncCallback(this.End);
                 del.BeginInvoke(callback, null); //could use the return value of BeginInvoke to store AsyncHandle in Dictionary.  Could block till done for testing.
+            }
+        }
+
+        protected bool IsRunning
+        {
+            get
+            {
+                return _asyncFunc.Progress.Status == StatusEnum.Running;
             }
         }
 
@@ -108,33 +114,18 @@ namespace MultithreadedCommand.Core.Async
         /// The callback of command being run.  This is executed on a worker thread - not the thread the user invoked.
         /// </summary>
         /// <param name="callback"></param>
-        private void End(IAsyncResult callback)
+        protected virtual void End(IAsyncResult callback)
         {
             AsyncResult result = (AsyncResult)callback;
             Action del = (Action)result.AsyncDelegate;
-            
-            bool wasCancelled = false; 
 
-            try
-            {
+            bool wasCancelled = _asyncFunc.Progress.Status == StatusEnum.Cancelled;
+
+            
                 //TODO:Place logging here
                 del.EndInvoke(result);
-            }
-            //catch (Exception e)
-            //{
-            //    //log it
-            //    //_logger.ErrorFormat(errorMessage);
-            //    //return; //do not remove from container.
-            //}
-            finally
-            {
-                //cancelling removes from container
-                wasCancelled = _asyncFunc.Progress.Status == StatusEnum.Cancelled;
-                if (!wasCancelled)
-                {
-                    SetInactive();
-                }
-            }
+            
+            
 
             //only remove if the user didn't already explicitly remove. cancelling will remove from container
             if (!wasCancelled && _asyncFunc.Properties.ShouldBeRemovedOnComplete)
@@ -143,26 +134,12 @@ namespace MultithreadedCommand.Core.Async
             }
         }
 
-        private void DoOnAfterSetActionInactive()
+        protected void DoOnAfterSetActionInactive()
         {
             if (AfterSetActionInactive != null)
             {
                 AfterSetActionInactive();
             }
-        }
-
-        private void SetInactive()
-        {
-            if (_container.Exists(_id, DecoratedCommand.GetType()))
-            {
-                _container.SetInactive(_id, DecoratedCommand.GetType());
-                DoOnAfterSetActionInactive();
-            }
-        }
-
-        private void SetActive()
-        {
-            _container.SetActive(_id, DecoratedCommand.GetType());
         }
 
         public void Dispose()

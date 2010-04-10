@@ -40,7 +40,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Async\AsyncCommandContainer.cs" />
+    <Compile Include="Async\TimedStaticAsyncCommandContainer.cs" />
+    <Compile Include="Async\ITimedAsyncCommandContainer.cs" />
+    <Compile Include="Async\IAsyncContainerItem.cs" />
+    <Compile Include="Async\StaticAsyncCommandContainer.cs" />
     <Compile Include="Async\AsyncCommandRemover.cs" />
     <Compile Include="Async\AsyncContainerItem.cs" />
     <Compile Include="Async\AsyncExtensions.cs" />
@@ -50,12 +53,18 @@
     <Compile Include="Async\IAsyncCommandContainer.cs" />
     <Compile Include="Async\IAsyncCommandItemTimeSpan.cs" />
     <Compile Include="Async\IAsyncCommandRemover.cs" />
+    <Compile Include="Async\TimedAsyncManager.cs" />
     <Compile Include="Commands\CommandBase.cs" />
     <Compile Include="Commands\FuncProperties.cs" />
     <Compile Include="Commands\FuncStatus.cs" />
     <Compile Include="Commands\ICommand.cs" />
     <Compile Include="Commands\StatusEnum.cs" />
     <Compile Include="Helpers\ProgressHelper.cs" />
+    <Compile Include="MultithreadedDictionary\IMultithreadedDictionary.cs" />
+    <Compile Include="MultithreadedDictionary\ISynchronizable.cs" />
+    <Compile Include="MultithreadedDictionary\ISynchronizedValue.cs" />
+    <Compile Include="MultithreadedDictionary\SynchronizedValue.cs" />
+    <Compile Include="MultithreadedDictionary\MultithreadedDictionary.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
