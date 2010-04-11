@@ -10,6 +10,13 @@ namespace MultithreadedCommand.Web.Controllers
 {
     public class ReportEmailerController : Controller
     {
+        private IAsyncCommandContainer _container;
+
+        public ReportEmailerController(IAsyncCommandContainer container)
+        {
+            _container = container;
+        }
+
         public ActionResult Index()
         {
             return View();
@@ -19,8 +26,7 @@ namespace MultithreadedCommand.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                IAsyncCommandContainer container = new AsyncCommandContainer(new AsyncCommandItemTimeSpan());
-                IAsyncCommand emailer = new ReportEmailer(reportEmail).AsAsync(id, container);
+                IAsyncCommand emailer = new ReportEmailer(reportEmail).AsAsync(id, _container);
 
                 emailer.Start();
             }

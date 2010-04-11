@@ -11,6 +11,15 @@ namespace MultithreadedCommand.Web.Controllers
 {
     public class AsyncManagerController : Controller
     {
+        private IAsyncCommandContainer _container;
+        private IAsyncCommandRemover _remover;
+
+        public AsyncManagerController(IAsyncCommandContainer container, IAsyncCommandRemover remover)
+        {
+            _container = container;
+            _remover = remover;
+        }
+
         public JsonResult GetCurrentProgress(string id, string funcName)
         {
             MVCHelper.AddNoCache(ControllerContext.HttpContext.Response);
@@ -18,9 +27,9 @@ namespace MultithreadedCommand.Web.Controllers
 
             FuncStatus progress = null;
 
-            if (new AsyncCommandContainer(new AsyncCommandItemTimeSpan()).Exists(id, commandType))
+            if (_container.Exists(id, commandType))
             {
-                progress = new AsyncCommandContainer(new AsyncCommandItemTimeSpan()).Get(id, commandType).Progress;
+                progress = _container.Get(id, commandType).Progress;
             }
             else
             {
@@ -37,9 +46,9 @@ namespace MultithreadedCommand.Web.Controllers
 
             FuncStatus progress = null;
 
-            if (new AsyncCommandContainer(new AsyncCommandItemTimeSpan()).Exists(id, commandType))
+            if (_container.Exists(id, commandType))
             {
-                IAsyncCommand manager = new AsyncCommandContainer(new AsyncCommandItemTimeSpan()).Get(id, commandType);
+                IAsyncCommand manager = _container.Get(id, commandType);
                 manager.Start();
                 progress = manager.Progress;
             }
@@ -56,11 +65,11 @@ namespace MultithreadedCommand.Web.Controllers
             MVCHelper.AddNoCache(ControllerContext.HttpContext.Response);
             Type commandType = ReflectionHelper.GetTypeByName(funcName);
 
-            IAsyncCommand funcToCheck = new AsyncCommandContainer(new AsyncCommandItemTimeSpan()).Get(id, commandType);
+            IAsyncCommand funcToCheck = _container.Get(id, commandType);
 
             if (funcToCheck != null)
             {
-                new AsyncCommandContainer(new AsyncCommandItemTimeSpan()).Remove(id, commandType);
+                _remover.RemoveCommand(id, commandType);
             }
         }
     }
