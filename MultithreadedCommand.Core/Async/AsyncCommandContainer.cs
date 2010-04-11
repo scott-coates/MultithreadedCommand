@@ -62,8 +62,18 @@ namespace MultithreadedCommand.Core.Async
 
         public IAsyncCommand Get(string id, Type commandType)
         {
-            //reset timer here.
-            return GetContainerItem(id, commandType).AsyncCommand;
+            lock (_syncRoot)
+            {
+                //reset timer here.
+                ResetTimer(id, commandType);
+                return GetContainerItem(id, commandType).AsyncCommand;
+            }
+        }
+
+        public virtual void ResetTimer(string id, Type commandType)
+        {
+            SetInactive(id, commandType);
+            SetActive(id, commandType);
         }
 
         internal AsyncContainerItem GetContainerItem(string id, Type commandType)

@@ -256,6 +256,20 @@ namespace MultithreadedCommand.Tests
 
             Assert.IsFalse(container.Exists("",func.Object.GetType()));
         }
+
+        [TestMethod]
+        public void JobCounterResetWhenRetrieved()
+        {
+            var func = new Mock<IAsyncCommand>();
+
+            var container = new Mock<AsyncCommandContainer>(new AsyncCommandItemTimeSpan()) { CallBase = true };
+
+            container.Object.Add(func.Object, "", func.Object.GetType());
+
+            var asyncCommand = container.Object.Get("", func.Object.GetType());
+
+            container.Verify(c => c.ResetTimer(It.IsAny<string>(), It.IsAny<Type>()));
+        }
         #endregion Container
 
         #region AsyncManager
