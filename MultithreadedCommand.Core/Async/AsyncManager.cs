@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using MultithreadedCommand.Core.Commands;
 using System.Runtime.Remoting.Messaging;
+using System.Threading;
 
 namespace MultithreadedCommand.Core.Async
 {
@@ -72,15 +73,29 @@ namespace MultithreadedCommand.Core.Async
             SetInactive();//set as inactive right away.
         }
 
-        public void Start()
+        public void RunJob(bool runAsync = false)
         {
             if (_asyncFunc.Progress.Status != StatusEnum.Running)
             {
                 SetActive();
                 Action del = _asyncFunc.Start;
-                AsyncCallback callback = new AsyncCallback(this.End);
-                del.BeginInvoke(callback, null); //could use the return value of BeginInvoke to store AsyncHandle in Dictionary.  Could block till done for testing.
+                if (runAsync)
+                {
+                    AsyncCallback callback = new AsyncCallback(this.End);
+                    del.BeginInvoke(callback, null);
+                }
+                else
+                {
+                    var result = del.BeginInvoke(null, null);
+                    result.AsyncWaitHandle.WaitOne();
+                    End(result);
+                }
             }
+        }
+
+        public void Start()
+        {
+            RunJob(true);
         }
 
         public void Cancel()
@@ -113,33 +128,22 @@ namespace MultithreadedCommand.Core.Async
             AsyncResult result = (AsyncResult)callback;
             Action del = (Action)result.AsyncDelegate;
             
-            bool wasCancelled = false; 
-
             try
             {
-                //TODO:Place logging here
+                SetInactive();
                 del.EndInvoke(result);
-            }
-            //catch (Exception e)
-            //{
-            //    //log it
-            //    //_logger.ErrorFormat(errorMessage);
-            //    //return; //do not remove from container.
-            //}
-            finally
-            {
-                //cancelling removes from container
-                wasCancelled = _asyncFunc.Progress.Status == StatusEnum.Cancelled;
-                if (!wasCancelled)
+                if (_asyncFunc.Properties.ShouldBeRemovedOnComplete)
                 {
-                    SetInactive();
+                    //Remove this process from our collection. 
+                    //wont be removed if exception occurs
+                    _container.Remove(_id, _asyncFunc.GetType()); 
                 }
             }
-
-            //only remove if the user didn't already explicitly remove. cancelling will remove from container
-            if (!wasCancelled && _asyncFunc.Properties.ShouldBeRemovedOnComplete)
+            catch (Exception e)
             {
-                _container.Remove(_id, _asyncFunc.GetType()); //Remove this process from our collection. //wont be removed if exception occurs
+                throw new Exception(
+                    string.Format("Error with command: {0}. Id: {1}.", DecoratedCommand.GetType().ToString(), _id)
+                    , e);
             }
         }
 

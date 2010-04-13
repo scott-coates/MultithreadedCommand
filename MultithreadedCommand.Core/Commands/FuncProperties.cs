@@ -7,6 +7,6 @@ namespace MultithreadedCommand.Core.Commands
 {
     public class FuncProperties
     {
-        public bool ShouldBeRemovedOnComplete { get; set; }
+        public virtual bool ShouldBeRemovedOnComplete { get; set; }
     }
 }

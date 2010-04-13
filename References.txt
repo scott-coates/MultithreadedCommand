@@ -11,5 +11,10 @@ Use structuremap to inject in controllers
 add test to see if finished when not removing
 use command remover in controller
 look into using a new class for timers
-look into orig files
-ignore test results, suo, csproj. 
+look into really short running jobs. kinds that finish before first request.
+
+types of examples:
+report emailer - basic.
+Never ending - have to cancel.
+Always crashes.
+long running - 20-60 seconds.

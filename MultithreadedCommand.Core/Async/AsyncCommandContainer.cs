@@ -135,19 +135,19 @@ namespace MultithreadedCommand.Core.Async
             }
         }
 
-        internal void RemoveAll()
-        {
-            lock (_syncRoot)
-            {
-                _processStatus.Clear();
-            }
-        }
-
         public void SetActive(string id, Type commandType)
         {
             lock (_syncRoot)
             {
-                GetContainerItem(id, commandType).Timer.Stop();
+                var containerItem = GetContainerItem(id, commandType);
+                if (containerItem.AsyncCommand.Progress.Status != Commands.StatusEnum.Running)
+                {
+                    throw new InvalidOperationException(String.Format("Cannot set {0}, {1} to an active status if it is not running.", id, commandType));
+                }
+                else
+                {
+                    containerItem.Timer.Stop();
+                }
             }
         }
 
@@ -155,7 +155,15 @@ namespace MultithreadedCommand.Core.Async
         {
             lock (_syncRoot)
             {
-                GetContainerItem(id, commandType).Timer.Start();
+                var containerItem = GetContainerItem(id, commandType);
+                if(containerItem.AsyncCommand.Progress.Status == Commands.StatusEnum.Running)
+                {
+                    throw new InvalidOperationException(String.Format("Cannot set {0}, {1} to an inactive status while it is running.", id, commandType));
+                }
+                else
+                {
+                    containerItem.Timer.Start();
+                }
             }
         }
     }
