@@ -12,6 +12,7 @@ add test to see if finished when not removing
 use command remover in controller
 look into using a new class for timers
 look into really short running jobs. kinds that finish before first request.
+http://msdn.microsoft.com/en-us/magazine/cc163744.aspx
 
 types of examples:
 report emailer - basic.
