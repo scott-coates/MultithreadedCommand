@@ -59,8 +59,11 @@ namespace MultithreadedCommand.Tests
         // public void MyTestInitialize() { }
         //
         // Use TestCleanup to run code after each test has run
-        //[TestCleanup()]
-        //public void MyTestCleanup() { }
+        [TestCleanup()]
+        public void MyTestCleanup()
+        {
+            new AsyncCommandContainer(new AsyncCommandItemTimeSpan()).RemoveAll();
+        }
         //
         #endregion
 
@@ -471,29 +474,6 @@ namespace MultithreadedCommand.Tests
             a.RunJob();
 
             Assert.IsTrue(shouldBeTrue);
-        }
-
-        [TestMethod]
-        public void RemoveFromContainerDuringRunReducesCount()
-        {
-            var wait = new ManualResetEvent(false);
-            var func = new Mock<CommandBase>() { CallBase = true };
-            IAsyncCommandContainer container = new AsyncCommandContainer(new AsyncCommandItemTimeSpan());
-            IAsyncCommand a = new AsyncManager(func.Object, "", container);
-            
-            new AsyncCommandContainer(new AsyncCommandItemTimeSpan()).GetContainerItem("", func.Object.GetType()).OnItemRemoved += () => wait.Set();
-
-            int originalCount = new AsyncCommandContainer(new AsyncCommandItemTimeSpan()).Count;
-
-            func.Setup(f => f.CoreStart()).Callback(() => new AsyncCommandContainer(new AsyncCommandItemTimeSpan()).Remove("", func.Object.GetType()));
-
-            a.Start();
-
-            wait.WaitOne(3000);
-
-            int newCount = new AsyncCommandContainer(new AsyncCommandItemTimeSpan()).Count;
-
-            Assert.AreEqual(originalCount - 1, newCount);
         }
         #endregion
 

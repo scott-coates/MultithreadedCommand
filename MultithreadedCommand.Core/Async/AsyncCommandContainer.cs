@@ -156,7 +156,7 @@ namespace MultithreadedCommand.Core.Async
             lock (_syncRoot)
             {
                 var containerItem = GetContainerItem(id, commandType);
-                if(containerItem.AsyncCommand.Progress.Status == Commands.StatusEnum.Running)
+                if (containerItem.AsyncCommand.Progress.Status == Commands.StatusEnum.Running)
                 {
                     throw new InvalidOperationException(String.Format("Cannot set {0}, {1} to an inactive status while it is running.", id, commandType));
                 }
@@ -164,6 +164,14 @@ namespace MultithreadedCommand.Core.Async
                 {
                     containerItem.Timer.Start();
                 }
+            }
+        }
+
+        internal void RemoveAll()
+        {
+            lock (_syncRoot)
+            {
+                _processStatus.Clear();
             }
         }
     }
