@@ -62,8 +62,6 @@ namespace MultithreadedCommand.Core.Async
             }
         }
 
-        public event Action AfterSetActionInactive;
-
         public AsyncManager(ICommand funcToRun, string id, IAsyncCommandContainer container)
         {
             _container = container;
@@ -73,7 +71,7 @@ namespace MultithreadedCommand.Core.Async
             SetInactive();//set as inactive right away.
         }
 
-        public void RunJob(bool runAsync = false)
+        public void Start(bool runAsync = false)
         {
             if (_asyncFunc.Progress.Status != StatusEnum.Running)
             {
@@ -95,7 +93,7 @@ namespace MultithreadedCommand.Core.Async
 
         public void Start()
         {
-            RunJob(true);
+            Start(true);
         }
 
         public void Cancel()
@@ -147,20 +145,11 @@ namespace MultithreadedCommand.Core.Async
             }
         }
 
-        private void DoOnAfterSetActionInactive()
-        {
-            if (AfterSetActionInactive != null)
-            {
-                AfterSetActionInactive();
-            }
-        }
-
         private void SetInactive()
         {
             if (_container.Exists(_id, DecoratedCommand.GetType()))
             {
                 _container.SetInactive(_id, DecoratedCommand.GetType());
-                DoOnAfterSetActionInactive();
             }
         }
 

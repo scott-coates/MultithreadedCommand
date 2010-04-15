@@ -64,16 +64,24 @@ namespace MultithreadedCommand.Core.Async
         {
             lock (_syncRoot)
             {
-                //reset timer here.
-                ResetTimer(id, commandType);
-                return GetContainerItem(id, commandType).AsyncCommand;
+                var retVal = GetContainerItem(id, commandType).AsyncCommand;
+                return retVal;
             }
         }
 
-        public virtual void ResetTimer(string id, Type commandType)
+        public virtual void ResetTimer(string id, Type commandType, IAsyncCommand asyncFunc)
         {
-            SetInactive(id, commandType);
-            SetActive(id, commandType);
+            lock (_syncRoot)
+            {
+                if (asyncFunc.Progress.Status != Commands.StatusEnum.Running)
+                {
+                    SetInactive(id, commandType);
+                }
+                else
+                {
+                    SetActive(id, commandType);
+                }
+            }
         }
 
         internal AsyncContainerItem GetContainerItem(string id, Type commandType)

@@ -10,6 +10,5 @@ namespace MultithreadedCommand.Core.Async
     public interface IAsyncCommand : ICommand
     {
         ICommand DecoratedCommand { get; }
-        event Action AfterSetActionInactive;
     }
 }

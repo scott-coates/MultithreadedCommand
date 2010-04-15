@@ -113,14 +113,11 @@ namespace MultithreadedCommand.Tests
         [TestMethod]
         public void RemovalTimerStartsWhenJobIsAdded()
         {
-            var func = new Mock<CommandBase> { CallBase = true };
+            var func = new Mock<IAsyncCommand>();
 
             func.Setup(f => f.Progress)
                 .Returns(new FuncStatus { Status = StatusEnum.NotStarted });
-
-            func.Setup(f => f.Properties)
-                .Returns(new FuncProperties { ShouldBeRemovedOnComplete = false });
-
+            
             AsyncCommandContainer container = new AsyncCommandContainer(new AsyncCommandItemTimeSpan());
 
             IAsyncCommand a = new AsyncManager(func.Object, "", container);
@@ -132,40 +129,19 @@ namespace MultithreadedCommand.Tests
         [TestMethod]
         public void JobRemovedFromContainerAfterRemovalTimeElapsed()
         {
-            var waitForRemove = new ManualResetEvent(false);
-            var func = new Mock<CommandBase>() { CallBase = true };
+            var asyncFunc = new Mock<IAsyncCommand>();
             var timeSpan = new Mock<IAsyncCommandItemTimeSpan>();
+
+            asyncFunc.Setup(a => a.Progress.Status).Returns(StatusEnum.Finished);
             timeSpan.Setup(t => t.Time).Returns(new TimeSpan(0, 0, 0, 0, 1));
-            var container = new Mock<AsyncCommandContainer>(timeSpan.Object) { CallBase = true };
-            
-            int inactiveCalledCounter = 0;
-            Action setInactive = () => 
-            {
-                if (++inactiveCalledCounter == 2)
-                {
-                    container.Object.GetContainerItem("", func.Object.GetType()).Timer.Start();
-                }
-            };
 
-            container.Setup(c => c.SetInactive("",func.Object.GetType())).Callback(setInactive);
-            IAsyncCommand a = new AsyncManager(func.Object, "", container.Object);
+            var container = new AsyncCommandContainer(timeSpan.Object);
 
-            func.Setup(f => f.Progress)
-                .Returns(new FuncStatus { Status = StatusEnum.NotStarted });
+            container.Add(asyncFunc.Object, "", asyncFunc.Object.GetType());
 
-            func.Setup(f => f.Properties)
-                .Returns(new FuncProperties { ShouldBeRemovedOnComplete = false });
+            container.SetInactive("", asyncFunc.Object.GetType());
 
-            new AsyncCommandContainer(new AsyncCommandItemTimeSpan()).GetContainerItem("", func.Object.GetType()).OnItemRemoved += () => waitForRemove.Set();
-
-            int originalCount = new AsyncCommandContainer(new AsyncCommandItemTimeSpan()).Count;
-
-            a.Start();
-            waitForRemove.WaitOne(3000);
-
-            int newCount = new AsyncCommandContainer(new AsyncCommandItemTimeSpan()).Count;
-
-            Assert.AreEqual(newCount, originalCount - 1);
+            container.Remove("", asyncFunc.Object.GetType());
         }
 
         [TestMethod]
@@ -189,20 +165,6 @@ namespace MultithreadedCommand.Tests
             waitForRemove.WaitOne(3000);
 
             Assert.IsFalse(container.Exists("",func.Object.GetType()));
-        }
-
-        [TestMethod]
-        public void JobCounterResetWhenRetrieved()
-        {
-            var func = new Mock<IAsyncCommand>();
-
-            var container = new Mock<AsyncCommandContainer>(new AsyncCommandItemTimeSpan()) { CallBase = true };
-
-            container.Object.Add(func.Object, "", func.Object.GetType());
-
-            var asyncCommand = container.Object.Get("", func.Object.GetType());
-
-            container.Verify(c => c.ResetTimer(It.IsAny<string>(), It.IsAny<Type>()));
         }
 
         [TestMethod]
@@ -277,6 +239,7 @@ namespace MultithreadedCommand.Tests
         {
             //arrange
             var func = new Mock<ICommand>();
+
             func.Setup(f => f.Progress)
               .Returns(new FuncStatus { Status = StatusEnum.NotStarted });
             func.Setup(f => f.Properties)
@@ -287,7 +250,7 @@ namespace MultithreadedCommand.Tests
             AsyncManager a = new AsyncManager(func.Object, "", container.Object);
             
             //act
-            a.RunJob();
+            a.Start(false);
 
             //assert
             func.Verify(f => f.Start());
@@ -373,7 +336,7 @@ namespace MultithreadedCommand.Tests
         {
             var func = new Mock<ICommand>();
             var container = new Mock<IAsyncCommandContainer>();
-            IAsyncCommand a = new AsyncManager(func.Object, "", container.Object);
+            AsyncManager a = new AsyncManager(func.Object, "", container.Object);
 
             //act
             func.Setup(f => f.Progress)
@@ -381,7 +344,7 @@ namespace MultithreadedCommand.Tests
             func.Setup(f => f.Properties)
                 .Returns(new FuncProperties { ShouldBeRemovedOnComplete = true });
 
-            a.Start();
+            a.Start(runAsync: false);
 
             //assert
             container.Verify(c => c.Remove("", func.Object.GetType()));
@@ -417,9 +380,23 @@ namespace MultithreadedCommand.Tests
             container.Setup(c => c.Exists(It.IsAny<string>(), It.IsAny<Type>())).Returns(true);
             var asyncFunc = new AsyncManager(func.Object, "", container.Object);
 
-            asyncFunc.RunJob();
+            asyncFunc.Start();
 
             container.Verify(c => c.SetInactive("", func.Object.GetType()));
+        }
+
+        [TestMethod]
+        public void RemovalTimerStopsWhenJobStartsRunning()
+        {
+            var func = new Mock<ICommand>();
+            var container = new Mock<IAsyncCommandContainer>();
+
+            func.Setup(f => f.Progress.Status).Returns(StatusEnum.Running);
+            func.Setup(f => f.Start()).Callback(() => container.Verify(c => c.SetActive("", func.Object.GetType())));
+            container.Setup(c => c.Exists(It.IsAny<string>(), It.IsAny<Type>())).Returns(true);
+            var asyncFunc = new AsyncManager(func.Object, "", container.Object);
+
+            asyncFunc.Start();
         }
 
         #endregion
@@ -450,7 +427,7 @@ namespace MultithreadedCommand.Tests
 
             func.Setup(f => f.CoreStart()).Callback(() => func.Object.Cancel());
 
-            a.RunJob();
+            a.Start();
 
             Assert.IsTrue(shouldBeTrue);
         }
@@ -471,7 +448,7 @@ namespace MultithreadedCommand.Tests
 
             a.OnSuccess += () => shouldBeTrue = true;
 
-            a.RunJob();
+            a.Start(false);
 
             Assert.IsTrue(shouldBeTrue);
         }

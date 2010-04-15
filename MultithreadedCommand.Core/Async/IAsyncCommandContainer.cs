@@ -14,6 +14,6 @@ namespace MultithreadedCommand.Core.Async
         void Remove(string id, Type commandType);
         void SetActive(string id, Type commandType);
         void SetInactive(string id, Type commandType);
-        void ResetTimer(string id, Type commandType);
+        void ResetTimer(string id, Type commandType, IAsyncCommand command);
     }
 }
