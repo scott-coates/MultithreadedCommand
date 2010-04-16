@@ -115,8 +115,7 @@ namespace MultithreadedCommand.Tests
         {
             var func = new Mock<IAsyncCommand>();
 
-            func.Setup(f => f.Progress)
-                .Returns(new FuncStatus { Status = StatusEnum.NotStarted });
+            func.Setup(f => f.Progress.Status).Returns(StatusEnum.NotStarted);
             
             AsyncCommandContainer container = new AsyncCommandContainer(new AsyncCommandItemTimeSpan());
 
@@ -129,6 +128,7 @@ namespace MultithreadedCommand.Tests
         [TestMethod]
         public void JobRemovedFromContainerAfterRemovalTimeElapsed()
         {
+            var wait = new ManualResetEvent(false);
             var asyncFunc = new Mock<IAsyncCommand>();
             var timeSpan = new Mock<IAsyncCommandItemTimeSpan>();
 
@@ -140,8 +140,11 @@ namespace MultithreadedCommand.Tests
             container.Add(asyncFunc.Object, "", asyncFunc.Object.GetType());
 
             container.SetInactive("", asyncFunc.Object.GetType());
+            container.GetContainerItem("", asyncFunc.Object.GetType()).OnItemRemoved += () => wait.Set();
 
-            container.Remove("", asyncFunc.Object.GetType());
+            wait.WaitOne(3000);
+
+            Assert.IsFalse(container.Exists("", asyncFunc.Object.GetType()));
         }
 
         [TestMethod]
