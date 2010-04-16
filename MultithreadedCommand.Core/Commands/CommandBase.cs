@@ -10,7 +10,7 @@ namespace MultithreadedCommand.Core.Commands
     public abstract class CommandBase : ICommand
     {
         protected object _syncRoot = new object();
-        protected Stopwatch _watch = null;
+        protected Stopwatch _watch = new Stopwatch();
         protected DateTime _startDateTime;
         protected DateTime _endDateTime;
         protected FuncProperties _funcProperties = new FuncProperties();
@@ -73,7 +73,7 @@ namespace MultithreadedCommand.Core.Commands
 
         private void StartTiming()
         {
-            _watch = new Stopwatch();
+            _watch.Reset();
             _startDateTime = DateTime.Now;
             _watch.Start();
         }
@@ -126,7 +126,7 @@ namespace MultithreadedCommand.Core.Commands
         {
             get
             {
-                lock (_syncRoot)
+                //lock (_syncRoot) //Really needed?
                 {
                     var retVal = new FuncStatus();
 
@@ -175,6 +175,14 @@ namespace MultithreadedCommand.Core.Commands
             get
             {
                 return _funcProperties;
+            }
+        }
+
+        public void SetActive()
+        {
+            lock (_syncRoot)
+            {
+                _status = StatusEnum.Running;
             }
         }
     }

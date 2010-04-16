@@ -14,6 +14,8 @@ look into using a new class for timers
 look into really short running jobs. kinds that finish before first request.
 look into checking container if exists before removing/setting inactive.
 data annotations client side validation - don't start if not valid.
+add test for setting active to decorated on start();
+look into setting inactive from separate thread.
 http://msdn.microsoft.com/en-us/magazine/cc163744.aspx
 
 types of examples:

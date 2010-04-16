@@ -150,8 +150,9 @@ namespace MultithreadedCommand.Core.Async
             _container.SetInactive(_id, DecoratedCommand.GetType());
         }
 
-        private void SetActive()
+        public void SetActive()
         {
+            _asyncFunc.SetActive();
             _container.SetActive(_id, DecoratedCommand.GetType());
         }
 

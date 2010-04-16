@@ -15,6 +15,7 @@ namespace MultithreadedCommand.Core.Commands
         event Action OnSuccess;
         FuncStatus Progress { get; }
         FuncProperties Properties { get; }
+        void SetActive();
     }
 
     public interface ICommand<T> : ICommand
