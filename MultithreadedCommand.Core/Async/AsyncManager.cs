@@ -128,8 +128,8 @@ namespace MultithreadedCommand.Core.Async
             
             try
             {
-                SetInactive();
                 del.EndInvoke(result);
+                SetInactive();
                 if (_asyncFunc.Properties.ShouldBeRemovedOnComplete)
                 {
                     //Remove this process from our collection. 

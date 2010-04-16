@@ -168,7 +168,7 @@ namespace MultithreadedCommand.Tests
         {
             var func = new Mock<IAsyncCommand>();
 
-            func.Setup(f => f.Progress).Returns(new FuncStatus { Status = StatusEnum.Finished });
+            func.Setup(f => f.Progress.Status).Returns(StatusEnum.Finished);
 
             var container = new Mock<AsyncCommandContainer>(new AsyncCommandItemTimeSpan()) { CallBase = true };
 
@@ -198,11 +198,9 @@ namespace MultithreadedCommand.Tests
             //arrange
             var func = new Mock<ICommand>();
 
-            func.Setup(f => f.Progress)
-                .Returns(new FuncStatus { Status = StatusEnum.Running });
+            func.Setup(f => f.Progress.Status).Returns(StatusEnum.Running);
 
-            func.Setup(f => f.Properties)
-                .Returns(new FuncProperties { ShouldBeRemovedOnComplete = true });
+            func.Setup(f => f.Properties.ShouldBeRemovedOnComplete).Returns(true);
 
             var container = new Mock<IAsyncCommandContainer>();
             ICommand a = new AsyncManager(func.Object, "", container.Object);
@@ -220,10 +218,9 @@ namespace MultithreadedCommand.Tests
             //arrange
             var func = new Mock<ICommand>();
 
-            func.Setup(f => f.Progress)
-              .Returns(new FuncStatus { Status = StatusEnum.NotStarted });
-            func.Setup(f => f.Properties)
-                .Returns(new FuncProperties { ShouldBeRemovedOnComplete = true });
+            func.Setup(f => f.Progress.Status).Returns(StatusEnum.NotStarted);
+
+            func.Setup(f => f.Properties.ShouldBeRemovedOnComplete).Returns(true);
 
             var container = new Mock<IAsyncCommandContainer>();
 
@@ -319,10 +316,8 @@ namespace MultithreadedCommand.Tests
             AsyncManager a = new AsyncManager(func.Object, "", container.Object);
 
             //act
-            func.Setup(f => f.Progress)
-                .Returns(new FuncStatus { Status = StatusEnum.NotStarted });
-            func.Setup(f => f.Properties)
-                .Returns(new FuncProperties { ShouldBeRemovedOnComplete = true });
+            func.Setup(f => f.Progress.Status).Returns(StatusEnum.NotStarted);
+            func.Setup(f => f.Properties.ShouldBeRemovedOnComplete).Returns(true);
 
             a.Start(runAsync: false);
 
@@ -338,10 +333,8 @@ namespace MultithreadedCommand.Tests
             IAsyncCommand a = new AsyncManager(func.Object, "", container.Object);
 
             //act
-            func.Setup(f => f.Progress)
-                .Returns(new FuncStatus { Status = StatusEnum.NotStarted });
-            func.Setup(f => f.Properties)
-                .Returns(new FuncProperties { ShouldBeRemovedOnComplete = false });
+            func.Setup(f => f.Progress.Status).Returns(StatusEnum.NotStarted);
+            func.Setup(f => f.Properties.ShouldBeRemovedOnComplete).Returns(false);
 
             a.Start();
 
@@ -432,8 +425,7 @@ namespace MultithreadedCommand.Tests
 
             var func = new Mock<CommandBase>() { CallBase = true };
 
-            func.Setup(f => f.Properties)
-                .Returns(new FuncProperties { ShouldBeRemovedOnComplete = true });
+            func.Setup(f => f.Properties.ShouldBeRemovedOnComplete).Returns(true);
 
             var container = new Mock<IAsyncCommandContainer>();
 
