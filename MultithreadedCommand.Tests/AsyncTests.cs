@@ -148,29 +148,6 @@ namespace MultithreadedCommand.Tests
         }
 
         [TestMethod]
-        public void JobRemovedIfNotStartedForALongTime()
-        {
-            var waitForRemove = new ManualResetEvent(false);
-            var func = new Mock<CommandBase>() { CallBase = true };
-            var timeSpan = new Mock<IAsyncCommandItemTimeSpan>();
-            timeSpan.Setup(t => t.Time).Returns(new TimeSpan(0, 0, 0, 0, 1));
-            AsyncCommandContainer container = new AsyncCommandContainer(timeSpan.Object);
-            IAsyncCommand a = new AsyncManager(func.Object, "", container);
-
-            container.GetContainerItem("", func.Object.GetType()).OnItemRemoved += () => waitForRemove.Set();
-
-            func.Setup(f => f.Progress)
-                .Returns(new FuncStatus { Status = StatusEnum.NotStarted });
-
-            func.Setup(f => f.Properties)
-                .Returns(new FuncProperties { ShouldBeRemovedOnComplete = false });
-
-            waitForRemove.WaitOne(3000);
-
-            Assert.IsFalse(container.Exists("",func.Object.GetType()));
-        }
-
-        [TestMethod]
         [ExpectedException(typeof(InvalidOperationException))]
         public void SettingInactiveJobWhenRunningThrowsException()
         {
@@ -400,6 +377,19 @@ namespace MultithreadedCommand.Tests
             var asyncFunc = new AsyncManager(func.Object, "", container.Object);
 
             asyncFunc.Start();
+        }
+
+        [TestMethod]
+        public void JobSetToInactiveWhenAdded()
+        {
+            var func = new Mock<ICommand>();
+            var container = new Mock<IAsyncCommandContainer>();
+
+            AsyncManager manager = new AsyncManager(func.Object, "", container.Object);
+
+            container.Verify(c => c.SetInactive("", func.Object.GetType()));
+
+            Assert.IsFalse(container.Object.Exists("", func.Object.GetType()));
         }
 
         #endregion

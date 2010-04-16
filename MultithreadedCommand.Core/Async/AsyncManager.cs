@@ -147,10 +147,7 @@ namespace MultithreadedCommand.Core.Async
 
         private void SetInactive()
         {
-            if (_container.Exists(_id, DecoratedCommand.GetType()))
-            {
-                _container.SetInactive(_id, DecoratedCommand.GetType());
-            }
+            _container.SetInactive(_id, DecoratedCommand.GetType());
         }
 
         private void SetActive()
