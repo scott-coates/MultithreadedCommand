@@ -84,13 +84,12 @@ namespace MultithreadedCommand.Tests
 
             var func = new Mock<CommandBase>() { CallBase = true };
             var container = new Mock<IAsyncCommandContainer>();
-            AsyncManager a = new AsyncManager(func.Object, "", container.Object);
-
-            a.OnSuccess += () => shouldBeTrue = false;
+            
+            func.Object.OnSuccess += () => shouldBeTrue = false;
 
             func.Setup(f => f.CoreStart()).Callback(() => func.Object.Cancel());
 
-            a.Start();
+            func.Object.Start();
 
             Assert.IsTrue(shouldBeTrue);
         }
@@ -106,11 +105,9 @@ namespace MultithreadedCommand.Tests
 
             var container = new Mock<IAsyncCommandContainer>();
 
-            AsyncManager a = new AsyncManager(func.Object, "", container.Object);
+            func.Object.OnSuccess += () => shouldBeTrue = true;
 
-            a.OnSuccess += () => shouldBeTrue = true;
-
-            a.Start(false);
+            func.Object.Start();
 
             Assert.IsTrue(shouldBeTrue);
         }
