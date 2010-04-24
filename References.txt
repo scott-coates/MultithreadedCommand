@@ -4,13 +4,6 @@ http://www.codeproject.com/KB/cs/AsyncMethodInvocation.aspx
 http://weblogs.asp.net/scottgu/archive/2010/01/15/asp-net-mvc-2-model-validation.aspx
 
 Does instantiating a new timer class automatically use up a thread on the thread pool? Yes. The System.Timers.Timer class is a wrapper for System.Threading.Timer
-Use IoC for async command container
-Make container itself internal.  Change logic so removing doesn't necessarily always cancel job.
-Change interface to only return IAsyncCommand.  Use internal.  Other callers don't need that other info.
-Use structuremap to inject in controllers
-add test to see if finished when not removing
-use command remover in controller
-look into using a new class for timers
 look into really short running jobs. kinds that finish before first request.
 look into checking container if exists before removing/setting inactive.
 data annotations client side validation - don't start if not valid.
