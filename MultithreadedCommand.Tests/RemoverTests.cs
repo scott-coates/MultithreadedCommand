@@ -69,29 +69,27 @@ namespace MultithreadedCommand.Tests
         [TestMethod]
         public void RemoverRemovesJob()
         {
-            var func = new Mock<ICommand>();
             var container = new Mock<IAsyncCommandContainer>();
-            var asyncFunc = new Mock<IAsyncCommand>();
+            var asyncFunc = new Mock<IAsyncCommand> { DefaultValue = DefaultValue.Mock };
             IAsyncCommandRemover remover = new AsyncCommandRemover(container.Object);
 
             container.Setup(c => c.Get(It.IsAny<string>(), It.IsAny<Type>())).Returns(asyncFunc.Object);
 
-            remover.RemoveCommand("", func.Object.GetType());
+            remover.RemoveCommand("", asyncFunc.Object.DecoratedCommand.GetType());
 
-            container.Verify(c => c.Remove("", func.Object.GetType()));
+            container.Verify(c => c.Remove("", asyncFunc.Object.DecoratedCommand.GetType()));
         }
 
         [TestMethod]
         public void RemoverCancelsJob()
         {
-            var func = new Mock<ICommand>();
             var container = new Mock<IAsyncCommandContainer>();
-            var asyncFunc = new Mock<IAsyncCommand>();
+            var asyncFunc = new Mock<IAsyncCommand> { DefaultValue = DefaultValue.Mock };
             IAsyncCommandRemover remover = new AsyncCommandRemover(container.Object);
 
             container.Setup(c => c.Get(It.IsAny<string>(), It.IsAny<Type>())).Returns(asyncFunc.Object);
 
-            remover.RemoveCommand("", func.Object.GetType());
+            remover.RemoveCommand("", asyncFunc.Object.DecoratedCommand.GetType());
 
             asyncFunc.Verify(af => af.Cancel());
         }
