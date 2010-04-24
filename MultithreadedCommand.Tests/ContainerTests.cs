@@ -155,11 +155,11 @@ namespace MultithreadedCommand.Tests
 
             func.Setup(f => f.Progress).Returns(new FuncStatus { Status = StatusEnum.Running });
 
-            var container = new Mock<AsyncCommandContainer>(new AsyncCommandItemTimeSpan()) { CallBase = true };
+            var container = new AsyncCommandContainer(new AsyncCommandItemTimeSpan());
 
-            container.Object.Add(func.Object, "", func.Object.GetType());
+            container.Add(func.Object, "", func.Object.GetType());
 
-            container.Object.SetInactive("", func.Object.GetType());
+            container.SetInactive("", func.Object.GetType());
         }
 
         [TestMethod]
@@ -170,11 +170,11 @@ namespace MultithreadedCommand.Tests
 
             func.Setup(f => f.Progress.Status).Returns(StatusEnum.Finished);
 
-            var container = new Mock<AsyncCommandContainer>(new AsyncCommandItemTimeSpan()) { CallBase = true };
+            var container = new AsyncCommandContainer(new AsyncCommandItemTimeSpan());
 
-            container.Object.Add(func.Object, "", func.Object.GetType());
+            container.Add(func.Object, "", func.Object.GetType());
 
-            container.Object.SetActive("", func.Object.GetType());
+            container.SetActive("", func.Object.GetType());
         }
         #endregion Container
     }
