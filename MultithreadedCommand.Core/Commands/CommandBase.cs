@@ -33,32 +33,54 @@ namespace MultithreadedCommand.Core.Commands
         {
             try
             {
-                _status = StatusEnum.Running;
+                SetRunning();
                 StartTiming();
                 DoOnStart();
                 CoreStart();
                 DoOnSuccess();//not called if cancelled
                 DoOnEnd();
                 EndTiming();
+                
+                SetEndOfJobStatus();
+            }
+            catch
+            {
+                lock (_syncRoot)
+                {
+                    _status = StatusEnum.Error;
+                    EndTiming(); //job is essentially done. stop counting.
+                    throw;
+                }
+            }
+        }
 
+        private void SetEndOfJobStatus()
+        {
+            lock (_syncRoot)
+            {
                 if (_status != StatusEnum.Cancelled)
                 {
                     _status = StatusEnum.Finished;
                 }
             }
-            catch
+        }
+
+        private void SetRunning()
+        {
+            lock (_syncRoot)
             {
-                _status = StatusEnum.Error;
-                EndTiming(); //job is essentially done. stop counting.
-                throw;
+                _status = StatusEnum.Running;
             }
         }
 
         public void Cancel()
         {
-            if (Progress.Status == StatusEnum.Running)
+            lock (_syncRoot)
             {
-                SetCancelledFlags();
+                if (_status  == StatusEnum.Running)
+                {
+                    SetCancelledFlags();
+                }
             }
         }
 
@@ -139,7 +161,7 @@ namespace MultithreadedCommand.Core.Commands
                     {
                         retVal.TimeRemaining = ProgressHelper.TimeRemaining(_watch.Elapsed.TotalSeconds, retVal.PercentDone, _startDateTime);
                     }
-                    else if (_watch != null)
+                    else
                     {
                         retVal.TimeRemaining = ProgressHelper.TimeRemaining(_watch.Elapsed.TotalSeconds, retVal.PercentDone, _startDateTime, _endDateTime);
                     }

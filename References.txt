@@ -10,6 +10,7 @@ data annotations client side validation - don't start if not valid.
 add test for setting active to decorated on start();
 look into setting inactive from separate thread.
 look into custom delegates instead of actions everywhere.
+look into logger for asp.net trace
 http://msdn.microsoft.com/en-us/magazine/cc163744.aspx
 
 types of examples:
