@@ -1,7 +1,6 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage<MultithreadedCommand.Web.Models.ReportEmail>" %>
 
 <%@ Import Namespace="MultithreadedCommand.Web.Models" %>
-<%@ Import Namespace="MultithreadedCommand.Web.Models" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">
     Index
 </asp:Content>

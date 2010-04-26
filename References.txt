@@ -9,6 +9,7 @@ look into checking container if exists before removing/setting inactive.
 data annotations client side validation - don't start if not valid.
 add test for setting active to decorated on start();
 look into setting inactive from separate thread.
+look into custom delegates instead of actions everywhere.
 http://msdn.microsoft.com/en-us/magazine/cc163744.aspx
 
 types of examples:

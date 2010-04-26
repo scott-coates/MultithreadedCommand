@@ -74,6 +74,7 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AsyncManagerController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\LongRunnerController.cs" />
     <Compile Include="Controllers\ReportEmailerController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -82,6 +83,7 @@
     <Compile Include="Helpers\ReflectionHelper.cs" />
     <Compile Include="Models\AccountModels.cs" />
     <Compile Include="Models\AsyncFuncViewModel.cs" />
+    <Compile Include="Models\LongRunner.cs" />
     <Compile Include="Models\ReportEmail.cs" />
     <Compile Include="Models\ReportEmailer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -107,9 +109,13 @@
     <Content Include="Content\progressBar.jpg" />
     <Content Include="Global.asax" />
     <Content Include="Scripts\jquery-ui-1.7.2.min.js" />
+    <Content Include="Views\LongRunner\Index.aspx" />
+    <Content Include="Views\LongRunner\LongRunningJob.aspx" />
     <Content Include="Views\ReportEmailer\Index.aspx" />
     <Content Include="Views\Shared\AsyncFunc.ascx" />
-    <Content Include="Web.config" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>
