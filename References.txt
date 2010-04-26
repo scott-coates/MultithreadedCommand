@@ -11,6 +11,8 @@ add test for setting active to decorated on start();
 look into setting inactive from separate thread.
 look into custom delegates instead of actions everywhere.
 look into logger for asp.net trace
+look into on success for javascript.
+
 http://msdn.microsoft.com/en-us/magazine/cc163744.aspx
 
 types of examples:
