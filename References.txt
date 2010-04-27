@@ -5,14 +5,17 @@ http://weblogs.asp.net/scottgu/archive/2010/01/15/asp-net-mvc-2-model-validation
 
 Does instantiating a new timer class automatically use up a thread on the thread pool? Yes. The System.Timers.Timer class is a wrapper for System.Threading.Timer
 look into really short running jobs. kinds that finish before first request.
-look into checking container if exists before removing/setting inactive.
 data annotations client side validation - don't start if not valid.
 add test for setting active to decorated on start();
 look into setting inactive from separate thread.
 look into custom delegates instead of actions everywhere.
 look into logger for asp.net trace
 look into on success for javascript.
-
+coming to page where job already finished shows 0 of 0 tasks.
+fix initial estimation.
+add logging to asp trace.
+time goes to unknown when it finishes, then goes to 0 seconds.
+look into watiN for web testing.
 http://msdn.microsoft.com/en-us/magazine/cc163744.aspx
 
 types of examples:

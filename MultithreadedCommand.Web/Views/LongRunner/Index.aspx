@@ -7,7 +7,7 @@
     <h2>
         Index</h2>
     <ul>
-        <% var values = Enumerable.Range(1, 501).Where(i => i % 25 == 0); %>
+        <% var values = Enumerable.Range(1, 501).Where(i => i % 10 == 0); %>
         <% foreach (var value in values)
            {%>
         <li>
