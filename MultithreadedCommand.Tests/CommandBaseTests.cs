@@ -68,7 +68,7 @@ namespace MultithreadedCommand.Tests
         [TestMethod]
         public void CallingCancelReturnsCancelledStatus()
         {
-            var func = new Mock<CommandBase>() { CallBase = true };
+            var func = new Mock<CommandBase> { CallBase = true };
 
             func.Setup(f => f.CoreStart()).Callback(() => func.Object.Cancel()); //the derived proxy class calls cancel for it's core action.
 
@@ -82,9 +82,9 @@ namespace MultithreadedCommand.Tests
         {
             bool shouldBeTrue = true;
 
-            var func = new Mock<CommandBase>() { CallBase = true };
+            var func = new Mock<CommandBase> { CallBase = true };
             var container = new Mock<IAsyncCommandContainer>();
-            
+
             func.Object.OnSuccess += () => shouldBeTrue = false;
 
             func.Setup(f => f.CoreStart()).Callback(() => func.Object.Cancel());
@@ -99,7 +99,7 @@ namespace MultithreadedCommand.Tests
         {
             bool shouldBeTrue = false;
 
-            var func = new Mock<CommandBase>() { CallBase = true };
+            var func = new Mock<CommandBase> { CallBase = true };
 
             func.Setup(f => f.Properties.ShouldBeRemovedOnComplete).Returns(true);
 
