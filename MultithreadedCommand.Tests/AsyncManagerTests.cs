@@ -86,8 +86,6 @@ namespace MultithreadedCommand.Tests
 
             func.Setup(f => f.Progress.Status).Returns(StatusEnum.Running);
 
-            func.Setup(f => f.Properties.ShouldBeRemovedOnComplete).Returns(true);
-
             var container = new Mock<IAsyncCommandContainer>();
             ICommand a = new AsyncManager(func.Object, "", container.Object);
 
@@ -105,8 +103,6 @@ namespace MultithreadedCommand.Tests
             var func = new Mock<ICommand>();
 
             func.Setup(f => f.Progress.Status).Returns(StatusEnum.NotStarted);
-
-            func.Setup(f => f.Properties.ShouldBeRemovedOnComplete).Returns(true);
 
             var container = new Mock<IAsyncCommandContainer>();
 
@@ -195,23 +191,6 @@ namespace MultithreadedCommand.Tests
         }
 
         [TestMethod]
-        public void JobRemovedWhenFinishesAndShouldBeRemovedOnCompleteIsTrue()
-        {
-            var func = new Mock<ICommand>();
-            var container = new Mock<IAsyncCommandContainer>();
-            AsyncManager a = new AsyncManager(func.Object, "", container.Object);
-
-            //act
-            func.Setup(f => f.Progress.Status).Returns(StatusEnum.NotStarted);
-            func.Setup(f => f.Properties.ShouldBeRemovedOnComplete).Returns(true);
-
-            a.Start(runAsync: false);
-
-            //assert
-            container.Verify(c => c.Remove("", func.Object.GetType()));
-        }
-
-        [TestMethod]
         public void JobNotRemovedWhenFinishesAndShouldBeRemovedOnCompleteIsFalse()
         {
             var func = new Mock<ICommand>();
@@ -220,7 +199,6 @@ namespace MultithreadedCommand.Tests
 
             //act
             func.Setup(f => f.Progress.Status).Returns(StatusEnum.NotStarted);
-            func.Setup(f => f.Properties.ShouldBeRemovedOnComplete).Returns(false);
 
             a.Start();
 
@@ -235,7 +213,6 @@ namespace MultithreadedCommand.Tests
             var container = new Mock<IAsyncCommandContainer>();
 
             func.Setup(f => f.Progress.Status).ReturnsInOrder(StatusEnum.NotStarted, StatusEnum.Running);
-            func.Setup(f => f.Properties.ShouldBeRemovedOnComplete).Returns(false);
             container.Setup(c => c.Exists(It.IsAny<string>(), It.IsAny<Type>())).Returns(true);
             var asyncFunc = new AsyncManager(func.Object, "", container.Object);
 

@@ -101,8 +101,6 @@ namespace MultithreadedCommand.Tests
 
             var func = new Mock<CommandBase> { CallBase = true };
 
-            func.Setup(f => f.Properties.ShouldBeRemovedOnComplete).Returns(true);
-
             var container = new Mock<IAsyncCommandContainer>();
 
             func.Object.OnSuccess += () => shouldBeTrue = true;

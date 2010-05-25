@@ -16,7 +16,6 @@ namespace MultithreadedCommand.Web.Models
         public ReportEmailer(ReportEmail reportEmail)
         {
             _reportEmail = reportEmail;
-            _funcProperties.ShouldBeRemovedOnComplete = true;
         }
 
         private void NextStep()
