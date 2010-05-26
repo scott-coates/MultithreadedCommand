@@ -8,6 +8,8 @@ using Moq;
 using System.Threading;
 using MultithreadedCommand.Core.Async;
 using MultithreadedCommand.Core.Commands;
+using MultithreadedCommand.Core.Logging;
+using log4net;
 
 namespace MultithreadedCommand.Tests
 {
@@ -22,6 +24,12 @@ namespace MultithreadedCommand.Tests
             //
             // TODO: Add constructor logic here
             //
+        }
+
+        private ILog GetLogger()
+        {
+            var logger = new LogProvider();
+            return logger.GetLogger();
         }
 
         private TestContext testContextInstance;
@@ -62,7 +70,7 @@ namespace MultithreadedCommand.Tests
         [TestCleanup()]
         public void MyTestCleanup()
         {
-            new AsyncCommandContainer(new AsyncCommandItemTimeSpan()).RemoveAll();
+            new AsyncCommandContainer(new Mock<IAsyncCommandItemTimeSpan>().Object, new Mock<ILog>().Object).RemoveAll();
         }
         //
         #endregion
@@ -71,7 +79,8 @@ namespace MultithreadedCommand.Tests
         [TestMethod]
         public void RemovingRunningJobReducesCount()
         {
-            IAsyncCommandContainer container = new AsyncCommandContainer(new AsyncCommandItemTimeSpan());
+            ILog logger = GetLogger();
+            IAsyncCommandContainer container = new AsyncCommandContainer(new AsyncCommandItemTimeSpan(), logger);
             var async = new Mock<IAsyncCommand>();
             async.Setup(a => a.Progress.Status).ReturnsInOrder(StatusEnum.NotStarted, StatusEnum.Running);
             container.Add(async.Object, "", async.Object.GetType());
@@ -86,7 +95,8 @@ namespace MultithreadedCommand.Tests
         [TestMethod]
         public void JobExistsWithAssemblyQualifiedName()
         {
-            IAsyncCommandContainer container = new AsyncCommandContainer(new AsyncCommandItemTimeSpan());
+            ILog logger = GetLogger();
+            IAsyncCommandContainer container = new AsyncCommandContainer(new AsyncCommandItemTimeSpan(), logger);
 
             var asyncFunc = new Mock<IAsyncCommand> { DefaultValue = DefaultValue.Mock };
 
@@ -99,7 +109,8 @@ namespace MultithreadedCommand.Tests
         [TestMethod]
         public void RemovalTimerSetToCorrectRemovalMinutesWhenAdded()
         {
-            AsyncCommandContainer container = new AsyncCommandContainer(new AsyncCommandItemTimeSpan());
+            ILog logger = GetLogger();
+            AsyncCommandContainer container = new AsyncCommandContainer(new AsyncCommandItemTimeSpan(), logger);
             var asyncFunc = new Mock<IAsyncCommand> { DefaultValue = DefaultValue.Mock };
 
             TimeSpan removalTime = Properties.Settings.Default.ContainerRemovalTime;
@@ -114,10 +125,11 @@ namespace MultithreadedCommand.Tests
         public void RemovalTimerStartsWhenJobIsAdded()
         {
             var func = new Mock<IAsyncCommand>();
+            ILog logger = GetLogger();
 
             func.Setup(f => f.Progress.Status).Returns(StatusEnum.NotStarted);
-            
-            AsyncCommandContainer container = new AsyncCommandContainer(new AsyncCommandItemTimeSpan());
+
+            AsyncCommandContainer container = new AsyncCommandContainer(new AsyncCommandItemTimeSpan(), logger);
 
             IAsyncCommand a = new AsyncManager(func.Object, "", container);
 
@@ -131,11 +143,12 @@ namespace MultithreadedCommand.Tests
             var wait = new ManualResetEvent(false);
             var asyncFunc = new Mock<IAsyncCommand>();
             var timeSpan = new Mock<IAsyncCommandItemTimeSpan>();
+            ILog logger = GetLogger();
 
             asyncFunc.Setup(a => a.Progress.Status).Returns(StatusEnum.Finished);
             timeSpan.Setup(t => t.Time).Returns(new TimeSpan(0, 0, 0, 0, 1));
 
-            var container = new AsyncCommandContainer(timeSpan.Object);
+            var container = new AsyncCommandContainer(timeSpan.Object, logger);
 
             container.Add(asyncFunc.Object, "", asyncFunc.Object.GetType());
 
@@ -152,10 +165,11 @@ namespace MultithreadedCommand.Tests
         public void SettingInactiveJobWhenRunningThrowsException()
         {
             var func = new Mock<IAsyncCommand>();
+            ILog logger = GetLogger();
 
             func.Setup(f => f.Progress).Returns(new FuncStatus { Status = StatusEnum.Running });
 
-            var container = new AsyncCommandContainer(new AsyncCommandItemTimeSpan());
+            var container = new AsyncCommandContainer(new AsyncCommandItemTimeSpan(), logger);
 
             container.Add(func.Object, "", func.Object.GetType());
 
@@ -167,10 +181,11 @@ namespace MultithreadedCommand.Tests
         public void SettingActiveJobWhenNotRunningThrowsException()
         {
             var func = new Mock<IAsyncCommand>();
+            ILog logger = GetLogger();
 
             func.Setup(f => f.Progress.Status).Returns(StatusEnum.Finished);
 
-            var container = new AsyncCommandContainer(new AsyncCommandItemTimeSpan());
+            var container = new AsyncCommandContainer(new AsyncCommandItemTimeSpan(), logger);
 
             container.Add(func.Object, "", func.Object.GetType());
 
