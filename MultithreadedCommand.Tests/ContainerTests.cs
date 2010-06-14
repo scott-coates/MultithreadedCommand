@@ -99,7 +99,6 @@ namespace MultithreadedCommand.Tests
             IAsyncCommandContainer container = new AsyncCommandContainer(new AsyncCommandItemTimeSpan(), logger);
 
             var asyncFunc = new Mock<IAsyncCommand> { DefaultValue = DefaultValue.Mock };
-
             container.Add(asyncFunc.Object, "", asyncFunc.Object.DecoratedCommand.GetType());
             bool exists = container.Exists("", asyncFunc.Object.DecoratedCommand.GetType());
 
