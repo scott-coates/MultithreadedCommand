@@ -205,7 +205,7 @@ namespace MultithreadedCommand.Tests
             func.Setup(f => f.Progress.Status).Returns(StatusEnum.NotStarted);
             func.Setup(f => f.Properties.ShouldBeRemovedOnComplete).Returns(true);
 
-            a.Start(runAsync: false);
+            a.Start(false);
 
             //assert
             container.Verify(c => c.Remove("", func.Object.GetType()));
