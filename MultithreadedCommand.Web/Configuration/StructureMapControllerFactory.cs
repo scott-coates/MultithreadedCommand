@@ -10,7 +10,7 @@ namespace MultithreadedCommand.Web.Configuration
 {
     public class StructureMapControllerFactory : DefaultControllerFactory
     {
-        protected override IController GetControllerInstance(RequestContext requestContext, Type controllerType)
+        protected override IController GetControllerInstance(Type controllerType)
         {
             try
             {

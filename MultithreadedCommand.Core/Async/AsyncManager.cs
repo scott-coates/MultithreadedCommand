@@ -71,7 +71,7 @@ namespace MultithreadedCommand.Core.Async
             SetInactive();//set as inactive right away.
         }
 
-        public void Start(bool runAsync = false)
+        public void Start(bool runAsync)
         {
             if (_asyncFunc.Progress.Status != StatusEnum.Running)
             {
