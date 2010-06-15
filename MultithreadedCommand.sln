@@ -1,25 +1,21 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MultithreadedCommand.Core", "MultithreadedCommand.Core\MultithreadedCommand.Core.csproj", "{0ABF2F05-F761-44FE-A5C1-87B0AC476717}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MultithreadedCommand.Tests", "MultithreadedCommand.Tests\MultithreadedCommand.Tests.csproj", "{8A2FC2F9-18FF-42E4-B516-0866096CD7F8}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C20B36A8-3819-41D3-A389-3D6E3FFAD356}"
 	ProjectSection(SolutionItems) = preProject
-		MultithreadedCommand.vsmdi = MultithreadedCommand.vsmdi
+		MultithreadedCommand1.vsmdi = MultithreadedCommand1.vsmdi
 		References.txt = References.txt
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MultithreadedCommand.Web", "MultithreadedCommand.Web\MultithreadedCommand.Web.csproj", "{F156AE6A-4302-4E29-BC56-E8FF4089FE6A}"
 EndProject
 Global
-	GlobalSection(MercurialSourceControlSolutionProperties) = preSolution
-		SolutionIsControlled = True
-		SolutionBindings = <Solution Location In Database>
-	EndGlobalSection
 	GlobalSection(TestCaseManagementSettings) = postSolution
-		CategoryFile = MultithreadedCommand.vsmdi
+		CategoryFile = MultithreadedCommand1.vsmdi
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -41,5 +37,9 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(MercurialSourceControlSolutionProperties) = preSolution
+		SolutionIsControlled = True
+		SolutionBindings = <Solution Location In Database>
 	EndGlobalSection
 EndGlobal

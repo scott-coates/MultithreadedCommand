@@ -36,7 +36,7 @@ namespace MultithreadedCommand.Web.Controllers
                 progress = new FuncStatus { Status = StatusEnum.NotStarted };
             }
 
-            return Json(progress, JsonRequestBehavior.AllowGet);
+            return Json(progress);
         }
 
         public JsonResult RestartProcess(string id, string funcName)
@@ -57,7 +57,7 @@ namespace MultithreadedCommand.Web.Controllers
                 progress = new FuncStatus { Status = StatusEnum.NotStarted };
             }
 
-            return Json(progress, JsonRequestBehavior.AllowGet);
+            return Json(progress);
         }
 
         public void CancelProcess(string id, string funcName)
