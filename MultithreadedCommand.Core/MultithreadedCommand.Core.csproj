@@ -51,6 +51,7 @@
     <Compile Include="Async\IAsyncCommandItemTimeSpan.cs" />
     <Compile Include="Async\IAsyncCommandRemover.cs" />
     <Compile Include="Commands\CommandBase.cs" />
+    <Compile Include="Commands\FuncProperties.cs" />
     <Compile Include="Commands\FuncStatus.cs" />
     <Compile Include="Commands\ICommand.cs" />
     <Compile Include="Commands\StatusEnum.cs" />

@@ -14,6 +14,7 @@ namespace MultithreadedCommand.Core.Commands
         event Action OnCancelled;
         event Action OnSuccess;
         FuncStatus Progress { get; }
+        FuncProperties Properties { get; }
         void SetActive();
     }
 

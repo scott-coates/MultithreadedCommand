@@ -13,6 +13,7 @@ namespace MultithreadedCommand.Core.Commands
         protected Stopwatch _watch = new Stopwatch();
         protected DateTime _startDateTime;
         protected DateTime _endDateTime;
+        protected FuncProperties _funcProperties = new FuncProperties();
         protected StatusEnum _status;
         protected string _message = string.Empty;
 
@@ -189,6 +190,14 @@ namespace MultithreadedCommand.Core.Commands
         public virtual void Dispose()
         {
 
+        }
+
+        public virtual FuncProperties Properties
+        {
+            get
+            {
+                return _funcProperties;
+            }
         }
 
         public void SetActive()

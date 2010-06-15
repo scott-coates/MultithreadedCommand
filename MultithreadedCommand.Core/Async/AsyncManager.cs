@@ -109,6 +109,14 @@ namespace MultithreadedCommand.Core.Async
             }
         }
 
+        public FuncProperties Properties
+        {
+            get
+            {
+                return _asyncFunc.Properties;
+            }
+        }
+
         /// <summary>
         /// The callback of command being run.  This is executed on a worker thread - not the thread the user invoked.
         /// </summary>
@@ -122,6 +130,12 @@ namespace MultithreadedCommand.Core.Async
             {
                 del.EndInvoke(result);
                 SetInactive();
+                if (_asyncFunc.Properties.ShouldBeRemovedOnComplete)
+                {
+                    //Remove this process from our collection. 
+                    //wont be removed if exception occurs
+                    _container.Remove(_id, _asyncFunc.GetType()); 
+                }
             }
             catch (Exception e)
             {
