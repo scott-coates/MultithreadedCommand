@@ -7,7 +7,7 @@ using System.Web.Mvc;
 namespace MultithreadedCommand.Web.Controllers
 {
     [HandleError]
-    public class HomeController : Controller
+    public class MultithreadedHomeController : Controller
     {
         public ActionResult Index()
         {
