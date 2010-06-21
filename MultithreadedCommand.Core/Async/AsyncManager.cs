@@ -5,6 +5,8 @@ using System.Text;
 using MultithreadedCommand.Core.Commands;
 using System.Runtime.Remoting.Messaging;
 using System.Threading;
+using CaresCommon.Logging;
+using CaresCommon.Extensions;
 
 namespace MultithreadedCommand.Core.Async
 {
@@ -13,7 +15,8 @@ namespace MultithreadedCommand.Core.Async
         private readonly ICommand _asyncFunc = null;
         private readonly string _id = string.Empty;
         private readonly IAsyncCommandContainer _container = null;
-        
+        private readonly ILogger _logger = null;
+
         public event Action OnStart
         {
             add
@@ -62,12 +65,13 @@ namespace MultithreadedCommand.Core.Async
             }
         }
 
-        public AsyncManager(ICommand funcToRun, string id, IAsyncCommandContainer container)
+        public AsyncManager(ICommand funcToRun, string id, IAsyncCommandContainer container, ILogger logger)
         {
             _container = container;
             _id = id;
             _asyncFunc = funcToRun;
             _container.Add(this, id, funcToRun.GetType());
+            _logger = logger;
             SetInactive();//set as inactive right away.
         }
 
@@ -128,20 +132,21 @@ namespace MultithreadedCommand.Core.Async
             
             try
             {
-                del.EndInvoke(result);
                 SetInactive();
+                del.EndInvoke(result);
+
+                //Remove this process from our collection. 
+                //wont be removed if exception occurs
                 if (_asyncFunc.Properties.ShouldBeRemovedOnComplete)
                 {
-                    //Remove this process from our collection. 
-                    //wont be removed if exception occurs
                     _container.Remove(_id, _asyncFunc.GetType()); 
                 }
             }
             catch (Exception e)
             {
-                throw new Exception(
-                    string.Format("Error with command: {0}. Id: {1}.", DecoratedCommand.GetType().ToString(), _id)
-                    , e);
+                //log it - this is on a worker thread and wouldn't be logged or handled.
+                _logger.ErrorFormat("Error running {0}. " + _asyncFunc.Progress.GetPropertyValues(), e, _asyncFunc.ToString());
+                return;
             }
         }
 

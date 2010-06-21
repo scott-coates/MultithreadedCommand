@@ -8,6 +8,7 @@ using Moq;
 using System.Threading;
 using MultithreadedCommand.Core.Async;
 using MultithreadedCommand.Core.Commands;
+using CaresCommon.Logging;
 
 namespace MultithreadedCommand.Tests
 {
@@ -72,8 +73,9 @@ namespace MultithreadedCommand.Tests
             //arrange
             var func = new Mock<ICommand>();
             var container = new Mock<IAsyncCommandContainer>();
+            var logger = new Mock<ILogger>();
 
-            IAsyncCommand a = new AsyncManager(func.Object, "", container.Object);
+            IAsyncCommand a = new AsyncManager(func.Object, "", container.Object, logger.Object);
 
             container.Verify(c => c.Add(a, "", func.Object.GetType()));
         }
@@ -83,13 +85,14 @@ namespace MultithreadedCommand.Tests
         {
             //arrange
             var func = new Mock<ICommand>();
+            var logger = new Mock<ILogger>();
 
             func.Setup(f => f.Progress.Status).Returns(StatusEnum.Running);
 
             func.Setup(f => f.Properties.ShouldBeRemovedOnComplete).Returns(true);
 
             var container = new Mock<IAsyncCommandContainer>();
-            ICommand a = new AsyncManager(func.Object, "", container.Object);
+            ICommand a = new AsyncManager(func.Object, "", container.Object, logger.Object);
 
             //act
             a.Start();
@@ -103,6 +106,7 @@ namespace MultithreadedCommand.Tests
         {
             //arrange
             var func = new Mock<ICommand>();
+            var logger = new Mock<ILogger>();
 
             func.Setup(f => f.Progress.Status).Returns(StatusEnum.NotStarted);
 
@@ -110,7 +114,7 @@ namespace MultithreadedCommand.Tests
 
             var container = new Mock<IAsyncCommandContainer>();
 
-            AsyncManager a = new AsyncManager(func.Object, "", container.Object);
+            AsyncManager a = new AsyncManager(func.Object, "", container.Object, logger.Object);
             
             //act
             a.Start(false);
@@ -126,7 +130,9 @@ namespace MultithreadedCommand.Tests
             var mock = new Rhino.Mocks.MockRepository();
             var func = mock.DynamicMock<ICommand>();
             var container = mock.DynamicMock<IAsyncCommandContainer>();
-            IAsyncCommand a = new AsyncManager(func, "", container);
+            var logger = new Mock<ILogger>();
+
+            IAsyncCommand a = new AsyncManager(func, "", container, logger.Object);
             Action set = () => { };
 
             //act
@@ -144,7 +150,9 @@ namespace MultithreadedCommand.Tests
             var mock = new MockRepository();
             var func = mock.DynamicMock<ICommand>();
             var container = mock.DynamicMock<IAsyncCommandContainer>();
-            IAsyncCommand a = new AsyncManager(func, "", container);
+            var logger = new Mock<ILogger>();
+
+            IAsyncCommand a = new AsyncManager(func, "", container, logger.Object);
             Action set = () => { };
 
             //act
@@ -161,7 +169,9 @@ namespace MultithreadedCommand.Tests
         public void ExtensionMethodReturnsAsyncManager()
         {
             var container = new Mock<IAsyncCommandContainer>();
-            var asyncFunc = new Mock<ICommand>().Object.AsAsync("", container.Object);
+            var logger = new Mock<ILogger>();
+            var asyncFunc = new Mock<ICommand>().Object.AsAsync("", container.Object, logger.Object);
+
             Assert.IsTrue(asyncFunc is AsyncManager);
         }
 
@@ -169,7 +179,9 @@ namespace MultithreadedCommand.Tests
         public void ExtensionMethodAddsFuncToAsyncFuncContainer()
         {
             var container = new Mock<IAsyncCommandContainer>();
-            var asyncFunc = new Mock<ICommand>().Object.AsAsync("", container.Object);
+            var logger = new Mock<ILogger>();
+
+            var asyncFunc = new Mock<ICommand>().Object.AsAsync("", container.Object, logger.Object);
 
             container.Verify(c => c.Add(It.IsAny<IAsyncCommand>(), "", It.IsAny<Type>()), Times.Once());
         }
@@ -188,7 +200,9 @@ namespace MultithreadedCommand.Tests
         {
             var func = new Mock<ICommand>();
             var container = new Mock<IAsyncCommandContainer>();
-            IAsyncCommand a = new AsyncManager(func.Object, "", container.Object);
+            var logger = new Mock<ILogger>();
+
+            IAsyncCommand a = new AsyncManager(func.Object, "", container.Object, logger.Object);
 
             a.Cancel();
             func.Verify(f => f.Cancel(), Times.Exactly(1)); //even though we call a.cancel, func.Cancel is eventually called.
@@ -199,7 +213,9 @@ namespace MultithreadedCommand.Tests
         {
             var func = new Mock<ICommand>();
             var container = new Mock<IAsyncCommandContainer>();
-            AsyncManager a = new AsyncManager(func.Object, "", container.Object);
+            var logger = new Mock<ILogger>();
+
+            AsyncManager a = new AsyncManager(func.Object, "", container.Object, logger.Object);
 
             //act
             func.Setup(f => f.Progress.Status).Returns(StatusEnum.NotStarted);
@@ -216,7 +232,9 @@ namespace MultithreadedCommand.Tests
         {
             var func = new Mock<ICommand>();
             var container = new Mock<IAsyncCommandContainer>();
-            IAsyncCommand a = new AsyncManager(func.Object, "", container.Object);
+            var logger = new Mock<ILogger>();
+
+            IAsyncCommand a = new AsyncManager(func.Object, "", container.Object, logger.Object);
 
             //act
             func.Setup(f => f.Progress.Status).Returns(StatusEnum.NotStarted);
@@ -236,8 +254,10 @@ namespace MultithreadedCommand.Tests
 
             func.Setup(f => f.Progress.Status).ReturnsInOrder(StatusEnum.NotStarted, StatusEnum.Running);
             func.Setup(f => f.Properties.ShouldBeRemovedOnComplete).Returns(false);
+            var logger = new Mock<ILogger>();
+
             container.Setup(c => c.Exists(It.IsAny<string>(), It.IsAny<Type>())).Returns(true);
-            var asyncFunc = new AsyncManager(func.Object, "", container.Object);
+            var asyncFunc = new AsyncManager(func.Object, "", container.Object, logger.Object);
 
             asyncFunc.Start();
 
@@ -253,8 +273,10 @@ namespace MultithreadedCommand.Tests
             func.Setup(f => f.Progress.Status).ReturnsInOrder(StatusEnum.NotStarted, StatusEnum.Running);
             func.Setup(f => f.Properties.ShouldBeRemovedOnComplete).Returns(false);
             container.Setup(c => c.Exists(It.IsAny<string>(), It.IsAny<Type>())).Returns(true);
+            var logger = new Mock<ILogger>();
+
             
-            var asyncFunc = new AsyncManager(func.Object, "", container.Object);
+            var asyncFunc = new AsyncManager(func.Object, "", container.Object, logger.Object);
 
             asyncFunc.Start();
 
@@ -266,8 +288,9 @@ namespace MultithreadedCommand.Tests
         {
             var func = new Mock<ICommand>();
             var container = new Mock<IAsyncCommandContainer>();
+            var logger = new Mock<ILogger>();
 
-            AsyncManager manager = new AsyncManager(func.Object, "", container.Object);
+            AsyncManager manager = new AsyncManager(func.Object, "", container.Object, logger.Object);
 
             container.Verify(c => c.SetInactive("", func.Object.GetType()));
 

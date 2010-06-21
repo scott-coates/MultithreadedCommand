@@ -35,6 +35,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="CaresCommon, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\CaresCommon\CaresCommon.dll</HintPath>
+    </Reference>
     <Reference Include="StructureMap">
       <HintPath>.\StructureMap.dll</HintPath>
     </Reference>

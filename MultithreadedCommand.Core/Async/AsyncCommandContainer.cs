@@ -3,14 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Timers;
-using MultithreadedCommand.Core.Logging;
-using log4net;
+using CaresCommon.Logging;
 
 namespace MultithreadedCommand.Core.Async
 {
     public class AsyncCommandContainer : IAsyncCommandContainer
     {
-        private readonly ILog _logger = null;
+        private readonly ILogger _logger = null;
         private readonly IAsyncCommandItemTimeSpan _timeSpan = null;
         private static object _syncRoot = new object();
         //each job must have a unique ID.
@@ -21,7 +20,7 @@ namespace MultithreadedCommand.Core.Async
             InitializeContainer();
         }
 
-        public AsyncCommandContainer(IAsyncCommandItemTimeSpan timeSpan, ILog logger)
+        public AsyncCommandContainer(IAsyncCommandItemTimeSpan timeSpan, ILogger logger)
         {
             _timeSpan = timeSpan;
             _logger = logger;
@@ -110,7 +109,7 @@ namespace MultithreadedCommand.Core.Async
                     _processStatus[GetKey(id, commandType)].Dispose();
                     _processStatus[GetKey(id, commandType)].DoOnRemoved();
                 }
-                catch (Exception e)
+                catch
                 {
                     //error disposing.
                 }
