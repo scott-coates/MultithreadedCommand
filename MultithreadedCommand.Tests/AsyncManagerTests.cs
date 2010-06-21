@@ -250,12 +250,15 @@ namespace MultithreadedCommand.Tests
             var func = new Mock<ICommand>();
             var container = new Mock<IAsyncCommandContainer>();
 
-            func.Setup(f => f.Progress.Status).Returns(StatusEnum.Running);
-            func.Setup(f => f.Start()).Callback(() => container.Verify(c => c.SetActive("", func.Object.GetType())));
+            func.Setup(f => f.Progress.Status).ReturnsInOrder(StatusEnum.NotStarted, StatusEnum.Running);
+            func.Setup(f => f.Properties.ShouldBeRemovedOnComplete).Returns(false);
             container.Setup(c => c.Exists(It.IsAny<string>(), It.IsAny<Type>())).Returns(true);
+            
             var asyncFunc = new AsyncManager(func.Object, "", container.Object);
 
             asyncFunc.Start();
+
+            container.Verify(c => c.SetActive(It.IsAny<string>(),func.Object.GetType()));
         }
 
         [TestMethod]
