@@ -83,4 +83,8 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <PropertyGroup>
+    <PostBuildEvent>copy MultithreadedCommand.Core.dll ..\..\..\..\lib\MultithreadedCommand\MultithreadedCommand.Core.dll
+copy MultithreadedCommand.Core.pdb ..\..\..\..\lib\MultithreadedCommand\MultithreadedCommand.Core.pdb</PostBuildEvent>
+  </PropertyGroup>
 </Project>
