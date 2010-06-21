@@ -29,7 +29,7 @@ namespace MultithreadedCommand.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                IAsyncCommand emailer = new ReportEmailer(reportEmail).AsAsync(id, _container, _logger);
+                IAsyncCommand emailer = new ReportEmailer(reportEmail, _logger).AsAsync(id, _container, _logger);
 
                 emailer.Start();
             }

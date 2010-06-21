@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Diagnostics;
 using MultithreadedCommand.Core.Helpers;
+using CaresCommon.Logging;
 
 namespace MultithreadedCommand.Core.Commands
 {
@@ -16,6 +17,7 @@ namespace MultithreadedCommand.Core.Commands
         protected FuncProperties _funcProperties = new FuncProperties();
         protected StatusEnum _status;
         protected string _message = string.Empty;
+        protected ILogger _logger;
 
         public event Action OnStart;
 
@@ -25,8 +27,9 @@ namespace MultithreadedCommand.Core.Commands
 
         public event Action OnSuccess;
 
-        public CommandBase()
+        public CommandBase(ILogger logger)
         {
+            _logger = logger;
         }
 
         public void Start()

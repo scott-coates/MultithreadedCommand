@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using MultithreadedCommand.Core.Commands;
 using System.Threading;
+using CaresCommon.Logging;
 
 namespace MultithreadedCommand.Web.Models
 {
@@ -12,7 +13,8 @@ namespace MultithreadedCommand.Web.Models
         private readonly int _totalSteps = 0;
         private int _currentStep = 0;
 
-        public LongRunner(int totalSteps)
+        public LongRunner(int totalSteps, ILogger logger)
+            : base(logger)
         {
             _totalSteps = totalSteps;
         }

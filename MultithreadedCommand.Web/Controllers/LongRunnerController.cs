@@ -33,7 +33,7 @@ namespace MultithreadedCommand.Web.Controllers
 
         public void RunLongJob(int id)
         {
-            IAsyncCommand longRunner = new LongRunner(id).AsAsync(id.ToString(), _container, _logger);
+            IAsyncCommand longRunner = new LongRunner(id, _logger).AsAsync(id.ToString(), _container, _logger);
             longRunner.Start();
         }
     }

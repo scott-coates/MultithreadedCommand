@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Threading;
 using MultithreadedCommand.Core.Commands;
+using CaresCommon.Logging;
 
 namespace MultithreadedCommand.Web.Models
 {
@@ -13,7 +14,8 @@ namespace MultithreadedCommand.Web.Models
         private int _currentStep = 0;
         private ReportEmail _reportEmail;
 
-        public ReportEmailer(ReportEmail reportEmail)
+        public ReportEmailer(ReportEmail reportEmail, ILogger logger)
+            : base(logger)
         {
             _reportEmail = reportEmail;
             _funcProperties.ShouldBeRemovedOnComplete = true;
