@@ -1,6 +1,6 @@
 # MultithreadedCommand
 
-Provides asynchronous support for long-running tasks on web applications
+Provides asynchronous support for long-running tasks on web applications.
 
 ## About MultithreadedCommand
 
